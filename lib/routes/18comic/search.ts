@@ -20,17 +20,19 @@ export const route: Route = {
         supportPodcast: false,
         supportScihub: false,
     },
-    radar: {
-        source: ['jmcomic.group/'],
-        target: '/:category?/:time?/:order?/:keyword?',
-    },
+    radar: [
+        {
+            source: ['jmcomic.group/'],
+            target: '/:category?/:time?/:order?/:keyword?',
+        },
+    ],
     name: '搜索',
     maintainers: [],
     handler,
     url: 'jmcomic.group/',
-    description: `:::tip
+    description: `::: tip
   关键字必须超过两个字，这是来自网站的限制。
-  :::`,
+:::`,
 };
 
 async function handler(ctx) {

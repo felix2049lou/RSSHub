@@ -14,13 +14,15 @@ export const route: Route = {
         supportPodcast: false,
         supportScihub: false,
     },
-    radar: {
-        source: ['coomer.party/posts', 'coomer.party/'],
-    },
+    radar: [
+        {
+            source: ['coomer.su/posts', 'coomer.su/'],
+        },
+    ],
     name: 'Recent Posts',
     maintainers: ['nczitzk'],
     handler,
-    url: 'coomer.party/posts',
+    url: 'coomer.su/posts',
 };
 
 async function handler(ctx) {

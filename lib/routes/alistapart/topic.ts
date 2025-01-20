@@ -14,9 +14,12 @@ export const route: Route = {
         supportPodcast: false,
         supportScihub: false,
     },
-    radar: {
-        source: ['alistapart.com/blog/topic/:topic'],
-    },
+    radar: [
+        {
+            source: ['alistapart.com/blog/topic/:topic'],
+            target: '/:topic',
+        },
+    ],
     name: 'Topics',
     maintainers: ['Rjnishant530'],
     handler,

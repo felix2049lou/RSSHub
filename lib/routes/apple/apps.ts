@@ -1,4 +1,4 @@
-import { Route } from '@/types';
+import { Route, ViewType } from '@/types';
 import got from '@/utils/got';
 import { load } from 'cheerio';
 import { parseDate } from '@/utils/parse-date';
@@ -17,9 +17,34 @@ const platforms = {
 
 export const route: Route = {
     path: '/apps/update/:country/:id/:platform?',
-    categories: ['program-update'],
+    categories: ['program-update', 'popular'],
+    view: ViewType.Notifications,
     example: '/apple/apps/update/us/id408709785',
-    parameters: { country: 'App Store Country, obtain from the app URL, see below', id: 'App id, obtain from the app URL', platform: 'App Platform, see below, all by default' },
+    parameters: {
+        country: 'App Store Country, obtain from the app URL, see below',
+        id: 'App id, obtain from the app URL',
+        platform: {
+            description: 'App Platform, see below, all by default',
+            options: [
+                {
+                    value: 'All',
+                    label: 'all',
+                },
+                {
+                    value: 'iOS',
+                    label: 'iOS',
+                },
+                {
+                    value: 'macOS',
+                    label: 'macOS',
+                },
+                {
+                    value: 'tvOS',
+                    label: 'tvOS',
+                },
+            ],
+        },
+    },
     features: {
         requireConfig: false,
         requirePuppeteer: false,
@@ -28,20 +53,19 @@ export const route: Route = {
         supportPodcast: false,
         supportScihub: false,
     },
-    radar: {
-        source: ['apps.apple.com/:country/app/:appSlug/:id', 'apps.apple.com/:country/app/:id'],
-        target: '/apps/update/:country/:id',
-    },
+    radar: [
+        {
+            source: ['apps.apple.com/:country/app/:appSlug/:id', 'apps.apple.com/:country/app/:id'],
+            target: '/apps/update/:country/:id',
+        },
+    ],
     name: 'App Update',
     maintainers: ['EkkoG', 'nczitzk'],
     handler,
-    description: `| All | iOS | macOS | tvOS |
-  | --- | --- | ----- | ---- |
-  |     | iOS | macOS | tvOS |
-
-  :::tip
+    description: `
+::: tip
   For example, the URL of [GarageBand](https://apps.apple.com/us/app/messages/id408709785) in the App Store is \`https://apps.apple.com/us/app/messages/id408709785\`. In this case, the \`App Store Country\` parameter for the route is \`us\`, and the \`App id\` parameter is \`id1146560473\`. So the route should be [\`/apple/apps/update/us/id408709785\`](https://rsshub.app/apple/apps/update/us/id408709785).
-  :::`,
+:::`,
 };
 
 async function handler(ctx) {
@@ -50,7 +74,7 @@ async function handler(ctx) {
 
     let platformId;
 
-    if (platform) {
+    if (platform && platform !== 'all') {
         platform = platform.toLowerCase();
         platformId = Object.hasOwn(platforms, platform) ? platforms[platform] : platform;
     }
@@ -115,9 +139,13 @@ async function handler(ctx) {
 
     const icon = new URL('favicon.ico', rootUrl).href;
 
+    ctx.set('json', {
+        appData,
+    });
+
     return {
         item: items,
-        title: `${title} - Apple App Stroe`,
+        title: `${title} - Apple App Store`,
         link: currentUrl,
         description: description?.replace(/\n/g, ' '),
         language: $('html').prop('lang'),
@@ -128,8 +156,4 @@ async function handler(ctx) {
         author: artistName,
         allowEmpty: true,
     };
-
-    ctx.set('json', {
-        appData,
-    });
 }

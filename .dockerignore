@@ -11,7 +11,6 @@ app-minimal
 coverage
 node_modules
 test
-website
 
 # files
 .codecov.yml
@@ -26,12 +25,14 @@ website
 .(yarn|npm|nvm)rc
 *.md
 app.json
+eslint.config.mjs
 docker-compose*
 fly.toml
 jsconfig.json
 npm-debug.log
 process.json
 package-lock.json
+vitest.config.ts
 vercel.json
 
 # git but keep the git commit hash
